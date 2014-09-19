@@ -1,10 +1,7 @@
 function initialize(shared, themes){
    
    function doTabMode(){
-      shared.all([
-         themes.tabTheme.createUI(),
-         shared.getAllTabs()
-      ]).then(
+      themes.tabTheme.createUI();
    };
    
    function doOverlayMode(){

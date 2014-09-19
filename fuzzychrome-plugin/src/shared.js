@@ -4,7 +4,7 @@ var shared = (function(ayepromise){
    module.getAllTabs = function(){
       var defer = ayepromise.defer();
       chrome.windows.getAll({populate: true}, function(windows){
-         var tabList = _.flatten(_.map(windows, function(wh){ return wh.tabs; }))
+         var tabList = _.flatten(_.map(windows, function(wh){ return wh.tabs; }));
          defer.resolve(tabList);
       });
       return defer.promise;
