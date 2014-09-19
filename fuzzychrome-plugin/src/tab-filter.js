@@ -22,7 +22,6 @@ function initialize(shared, inputField, filterList){
                   tab: tab,
                   elem: elem
                };
-               console.log(str.toString());
                tabSet.add(str);
             }
          });
@@ -73,11 +72,7 @@ function initialize(shared, inputField, filterList){
    inputField.on('change', filter);
    
    shared.getAllTabs().then(populate);
-   /*
-   chrome.runtime.sendMessage({'command': 'getTabs'}, null, function(response){
-      console.log(response, 'sendMessage');
-      response.then(populate);
-   });*/
+
 }
 document.addEventListener('DOMContentLoaded', function(e){
    initialize(shared, $("#inputField"), $('#filterList'))
