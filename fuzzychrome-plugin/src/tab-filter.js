@@ -9,24 +9,50 @@ function initialize(shared, inputField, filterList){
       /*
        * TODO: Reuse might be faster than nuking the set entirely?
        */
-      tabSet = FuzzySet([], true, 2, 3);
+      console.log("Initialising the fuzzies...");
+//      tabSet = FuzzySet([], true, 2, 5);    
+
+      tabSet = AvroFuzz([], 2, 5);
       $('div', filterList).remove();
+      
+      //_.each(tabList.slice().splice(0,2), function(tab){
       _.each(tabList, function(tab){
+      
          var elem = $('<div class="item" id="'+tab.id+'"><span>'+tab.title+'</span></div>');
          filterList.append(elem);
+         
          var words = tab.title.split(/[\W_]+/).slice(0, 8);
          var len = words.length;
+      
+         // Minimum values that *must* be passed are:
+         //   id    - The unique key for this tab
+         //   value - The value by which we will search
+         // Note that other parameters that are passed into this object
+         // will be passed back in result
+         var tabInfo = {
+           id: tab.id,
+           value: tab.title,
+           element: elem,
+           tab: tab
+         };
+         tabSet.add(tabInfo);
+         
+         
+         /*
          _.each(words, function(word, offset){
             if ( word.length > 2 ) {
-               var str = new String(word);
-               str.metadata = {
-                  bias: 1-offset/len,
-                  tab: tab,
-                  elem: elem
+             
+               var tabInfo = {
+                 tab: tab,
+                 value: word,
+                 score: 0.0,
+                 element: elem
                };
-               tabSet.add(str);
+               
+               tabSet.add(tabInfo);
             }
          });
+         */
       });
    }
    
@@ -42,15 +68,41 @@ function initialize(shared, inputField, filterList){
    }
    
    function inputChanged(input){
-      console.log(input);
-      if ( input.length == 0 ) {
+          
+     // no point in looking for length less than two as our 
+     // n-grams start at 2.
+      if ( input.length < 2 ) {
          return $('div', filterList).show();
       }
+      
+      /*
+      var iterations = 10000;
+      var startTime = Date.now();
+      for(var i = 0; i < iterations; ++i) {
+        tabSet.get(input);
+      }
+      var stopTime = Date.now();
+      var duration = stopTime - startTime;
+      var lookupTimePerUnit = duration / iterations;
+      console.log("Lookup Length: " + input.length + " Total Duration: " + duration + "ms  Lookup Time Per Unit: " + lookupTimePerUnit + "ms Iterations: " + iterations);
+      */
+      
+      var matchedTabs = tabSet.get(input);
       var lut = {};
-      redraw(lut, _.map(tabSet.get(input), function(pair){
-         var tab = pair[1].metadata.tab;
-         lut[tab.id] = tab;
-         return {tab: tab, match: {score: pair[0], word: pair[1].toString(), bias: pair[1].metadata.bias}};
+      redraw(lut, _.map(matchedTabs, function(pair){
+      
+        var score = pair[0];
+        var tab = pair[1].tab;
+        lut[tab.id] = tab;
+         
+         return {
+           tab: tab, 
+           match: {
+             score: pair[1]['bias'], 
+             word: pair[1]['value'], 
+             bias: pair[1]['bias']
+           }
+         };
       }));
    }
    
