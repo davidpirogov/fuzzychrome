@@ -31,13 +31,18 @@
          border-left: 1px solid rgb(190,190,190);
          color: rgb(100,100,100);
          padding: 14px;
+         list-style: none;
+         list-image-style: none;
       }
+      li.item.disabled,
       div.item.disabled {
          color: rgb(165,165,165);
       }
+      li.item.active,
       div.item.active {
          color: rgb(80,80,80);
       }
+      li.item,
       div.item {
          padding: 6px;
          border: 0;
@@ -60,7 +65,9 @@
    <div id="header">
       <input id="inputField" type="text" autofocus>
    </div>
-   <div id="filterList"></div>
+   <div id="filterWrapper">
+     <ul id="filterList" class="sortable"></ul>
+   </div>
 </body>
 </html>
 

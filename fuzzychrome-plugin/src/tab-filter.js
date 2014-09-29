@@ -18,7 +18,7 @@ function initialize(shared, inputField, filterList){
       //_.each(tabList.slice().splice(0,2), function(tab){
       _.each(tabList, function(tab){
       
-         var elem = $('<div class="item" id="'+tab.id+'"><span>'+tab.title+'</span></div>');
+         var elem = $('<li class="item" id="'+tab.id+'"><span>'+tab.title+'</span></li>');
          filterList.append(elem);
          
          var words = tab.title.split(/[\W_]+/).slice(0, 8);
@@ -56,15 +56,25 @@ function initialize(shared, inputField, filterList){
       });
    }
    
-   function redraw(lut, tabList){
-      $('div', filterList).each(function(){
+   function redraw(lut, tabList) {
+      
+      // Update our scores and visuals
+      $('li', filterList).each(function(){
          var elem = $(this);
          if ( lut[elem.attr('id')] ) {
             elem.attr('class', 'item active');
+            elem.data('score', lut[elem.attr('id')].score);
          } else {
             elem.attr('class', 'item disabled');
+            elem.data('score', 0);
          }
       });
+      
+      // Sort the list based on the score
+      filterList.find('.item').sort(function(a, b) {
+         return +b.dataset.score - +a.dataset.score;
+      })
+      .appendTo(filterList);
    }
    
    function inputChanged(input){
@@ -72,7 +82,25 @@ function initialize(shared, inputField, filterList){
      // no point in looking for length less than two as our 
      // n-grams start at 2.
       if ( input.length < 2 ) {
-         return $('div', filterList).show();
+         
+         // TODO - Find a better way to handle the 'empty search' use case
+         // that resets the UL and items to a default (tab id) ordered state
+         // and clears their class & score data
+         
+         // Clear the item classes
+         $('li', filterList).each(function(){
+            var elem = $(this);
+            elem.attr('class', 'item active');
+            elem.data('score', 0);
+         });
+         
+         // Sort the list based on the tab id
+         filterList.find('.item').sort(function(a, b) {
+            return +$(a).attr('id') - +$(b).attr('id');
+         })
+         .appendTo(filterList);
+         
+         return $('li', filterList).show();
       }
       
       /*
@@ -87,12 +115,10 @@ function initialize(shared, inputField, filterList){
       console.log("Lookup Length: " + input.length + " Total Duration: " + duration + "ms  Lookup Time Per Unit: " + lookupTimePerUnit + "ms Iterations: " + iterations);
       */
       
-      var matchedTabs = tabSet.get(input);
       var lut = {};
-      redraw(lut, _.map(matchedTabs, function(pair){
-      
-        var score = pair[0];
+      var matchedTabs = _.map(tabSet.get(input), function(pair) {
         var tab = pair[1].tab;
+        tab.score = pair[0];
         lut[tab.id] = tab;
          
          return {
@@ -103,7 +129,9 @@ function initialize(shared, inputField, filterList){
              bias: pair[1]['bias']
            }
          };
-      }));
+      });
+      
+      redraw(lut, matchedTabs);
    }
    
    function closeFilter(){
