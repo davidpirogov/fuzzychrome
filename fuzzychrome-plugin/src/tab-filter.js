@@ -98,7 +98,7 @@ function initialize(shared, inputField, filterList){
          return {
            tab: tab, 
            match: {
-             score: pair[1]['bias'], 
+             score: pair[0], 
              word: pair[1]['value'], 
              bias: pair[1]['bias']
            }

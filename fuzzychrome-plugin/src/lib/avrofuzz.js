@@ -2,8 +2,7 @@
 
 var AvroFuzz = function(elementsArray, gramSizeLower, gramSizeUpper) {
    var avrofuzz = {
-      version: '0.0.1',
-      GRAM_SCORE_BASE: 0.0,
+      GRAM_SCORE_BASE: 0.1,
       GRAM_SCORE_SCALE: 1.0
    };
 
@@ -11,7 +10,7 @@ var AvroFuzz = function(elementsArray, gramSizeLower, gramSizeUpper) {
    // Ensure we have default options
    elementsArray = elementsArray || [];
    avrofuzz.gramSizeLower = gramSizeLower || 2;
-   avrofuzz.gramSizeUpper = gramSizeUpper || 5;
+   avrofuzz.gramSizeUpper = gramSizeUpper || 4;
 
    // define all the object functions and attributes
    avrofuzz.exactSet = [];
@@ -178,15 +177,7 @@ var AvroFuzz = function(elementsArray, gramSizeLower, gramSizeUpper) {
    		// its distance from the middle of the text
    		//
    		// I.e., the largest values will be at the start of the
-   		// text and will normalise to zero by the middle.
-   		//
-   		// The maximum coefficient contribution will be 50% of 
-   		// the text length, hence 0.5 will be added to the value
-   		// of GRAM_SCORE_BASE
-   		//
-   		// The minimum coefficient contribution will be 0% of
-   		// the text length, hence 0.0 will be added to the value
-   		// of GRAM_SCORE_BASE.
+   		// text and will normalise to GRAM_SCORE_BASE by the end.
    		else {
    			ngramValue.bias = this.GRAM_SCORE_BASE + ((text.length - gramIter) / text.length);
    		}
