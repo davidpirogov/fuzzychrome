@@ -1,7 +1,7 @@
 fuzzychrome
 ===========
 
-![alt tag](https://raw.githubusercontent.com/jotham/fuzzychrome/master/fuzzychrome-plugin/assets/icon128.png)
+![alt tag](https://raw.githubusercontent.com/davidcalculli/fuzzychrome/master/fuzzychrome-plugin/assets/icon128.png)
 
 Fuzzy Wuzzy was a bear Fuzzy Wuzzy had no hair Fuzzy Wuzzy wasn't fuzzy was he?
 
